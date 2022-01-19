@@ -115,8 +115,6 @@
         public IList<KeyValuePair<TKey, TVertex?>> GetNeighbors(
             TKey sourceKey)
         {
-            ValidateVertexKey(sourceKey);
-
             var inEdges = InEdges.ContainsKey(sourceKey)
                 ? InEdges[sourceKey]
                 : new List<TKey>();

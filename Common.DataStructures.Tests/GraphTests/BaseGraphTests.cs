@@ -124,16 +124,15 @@
         }
 
         [TestMethod]
-        public void GetNeighbors_MissingVertex_ShouldThrowArgumentOutOfRange()
+        public void GetNeighbors_MissingVertex_ReturnsEmptyList()
         {
             var baseGraph = new BaseGraph<int, string>();
             var missingVertex = 1;
 
-            Should.Throw<ArgumentOutOfRangeException>(
-                    () =>
-                    baseGraph.GetNeighbors(missingVertex))
-                .Message
-                .ShouldContain($"{missingVertex}");
+            var result = baseGraph.GetNeighbors(missingVertex);
+
+            result.ShouldNotBeNull();
+            result.ShouldBeEmpty();
         }
 
         [TestMethod]
