@@ -9,7 +9,7 @@
     public class BaseGraphTests
     {
         [TestMethod]
-        public void AddEdge_ExistingEdge_ShouldReturnFalse()
+        public void AddEdge_ExistingEdge_ReturnsFalse()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -22,7 +22,7 @@
         }
 
         [TestMethod]
-        public void AddEdge_MissingVertex_ShouldThrowArgumentOutOfRange()
+        public void AddEdge_MissingVertex_ThrowArgumentOutOfRange()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -34,7 +34,7 @@
         }
 
         [TestMethod]
-        public void AddEdge_NewEdge_ShouldReturnTrue()
+        public void AddEdge_NewEdge_ReturnsTrue()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -46,7 +46,7 @@
         }
 
         [TestMethod]
-        public void AddEdge_ReverseVertices_ShouldReturnTrue()
+        public void AddEdge_ReverseVertices_ReturnsTrue()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -59,7 +59,7 @@
         }
 
         [TestMethod]
-        public void AddEdge_SingleVertexEdge_ShouldReturnTrue()
+        public void AddEdge_SingleVertexEdge_ReturnsTrue()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -70,7 +70,7 @@
         }
 
         [TestMethod]
-        public void AddVertex_ExistingKey_ShouldReturnFalse()
+        public void AddVertex_ExistingKey_ReturnsFalse()
         {
             var baseGraph = new BaseGraph<int, string>();
             baseGraph.AddVertex(1);
@@ -81,7 +81,7 @@
         }
 
         [TestMethod]
-        public void AddVertex_NewVertex_ShouldReturnTrue()
+        public void AddVertex_NewVertex_ReturnsTrue()
         {
             var baseGraph = new BaseGraph<int, string>();
 
@@ -172,6 +172,74 @@
             var result = baseGraph.GetVertexValue(vertexKey);
 
             result.ShouldBe(vertexValue);
+        }
+
+        [TestMethod]
+        public void IsAdjacent_ExistingEdge_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var sourceKey = 1;
+            var targetKey = 2;
+            baseGraph.AddVertex(sourceKey);
+            baseGraph.AddVertex(targetKey);
+            baseGraph.AddEdge(
+                sourceKey,
+                targetKey);
+
+            var result = baseGraph.IsAdjacent(
+                sourceKey,
+                targetKey);
+
+            result.ShouldBeTrue();
+        }
+
+        [TestMethod]
+        public void IsAdjacent_MissingVertex_ReturnsFalse()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var missingVertexKey = 1;
+
+            var result = baseGraph.IsAdjacent(
+                missingVertexKey,
+                missingVertexKey);
+
+            result.ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public void IsAdjacent_ReversedVertices_ReturnsFalse()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var sourceKey = 1;
+            var targetKey = 2;
+            baseGraph.AddVertex(sourceKey);
+            baseGraph.AddVertex(targetKey);
+            baseGraph.AddEdge(
+                sourceKey,
+                targetKey);
+
+            var result = baseGraph.IsAdjacent(
+                targetKey,
+                sourceKey);
+
+            result.ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public void IsAdjacent_SelfEdgeVertex_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var vertexKey = 1;
+            baseGraph.AddVertex(vertexKey);
+            baseGraph.AddEdge(
+                vertexKey,
+                vertexKey);
+
+            var result = baseGraph.IsAdjacent(
+                vertexKey,
+                vertexKey);
+
+            result.ShouldBeTrue();
         }
     }
 }

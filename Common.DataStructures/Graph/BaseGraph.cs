@@ -141,13 +141,8 @@
         public bool IsAdjacent(
             TKey sourceKey, 
             TKey targetKey)
-        {
-            ValidateVertexKey(sourceKey);
-            ValidateVertexKey(targetKey);
-
-            return OutEdges.ContainsKey(sourceKey)
+            => OutEdges.ContainsKey(sourceKey)
                 && OutEdges[sourceKey].Contains(targetKey);
-        }
 
         public bool RemoveEdge(
             TKey sourceKey, 
