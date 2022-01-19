@@ -337,6 +337,7 @@
         [TestMethod]
         public void RemoveVertex_ExistingEdges_ReturnsTrueAndRemovesEdges()
         {
+            // TODO split into multiple RemoveVertex_ExistingEdges_... unit tests
             var baseGraph = new BaseGraph<int, string>();
             var sourceKey = 1;
             var targetKey = 2;
