@@ -106,14 +106,6 @@
         {
             IEnumerable<TKey> neighbors = new List<TKey>();
 
-            if (InEdges.ContainsKey(sourceKey))
-            {
-                neighbors = neighbors.Union(
-                    InEdges[sourceKey].Select(
-                        dictionary =>
-                        dictionary.Key));
-            }
-
             if (OutEdges.ContainsKey(sourceKey))
             {
                 neighbors = neighbors.Union(

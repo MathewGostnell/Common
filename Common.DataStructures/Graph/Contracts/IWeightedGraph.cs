@@ -6,6 +6,8 @@
         : IGraph<TKey, TVertex>
         where TKey : IEquatable<TKey>
     {
+        public IEnumerable<TKey> GetVertices();
+
         public TWeight? GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey);

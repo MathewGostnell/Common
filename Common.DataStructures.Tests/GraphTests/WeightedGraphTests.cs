@@ -177,7 +177,7 @@
 
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
-            result.Count.ShouldBe(3);
+            result.Count.ShouldBe(2);
         }
 
         [TestMethod]

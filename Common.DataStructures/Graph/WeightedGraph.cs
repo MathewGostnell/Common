@@ -17,6 +17,9 @@
                     : default
                 : default;
 
+        public IEnumerable<TKey> GetVertices()
+            => Verticies.Select(keyValuePair => keyValuePair.Key);
+
         public bool SetEdgeWeight(
             TKey sourceKey,
             TKey targetKey,
