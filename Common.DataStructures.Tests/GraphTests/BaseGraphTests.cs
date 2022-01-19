@@ -301,7 +301,7 @@
             var vertexKey= 1;
             baseGraph.AddVertex(vertexKey);
             baseGraph.AddEdge(
-                vertexKey, 
+                vertexKey,
                 vertexKey);
 
             var result = baseGraph.RemoveEdge(
@@ -309,6 +309,64 @@
                 vertexKey);
 
             result.ShouldBeTrue();
+        }
+
+        [TestMethod]
+        public void RemoveVertex_ExistingVertex_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var vertexKey = 1;
+            baseGraph.AddVertex(vertexKey);
+
+            var result = baseGraph.RemoveVertex(vertexKey);
+
+            result.ShouldBeTrue();
+        }
+
+        [TestMethod]
+        public void RemoveVertex_MissingVertex_ReturnsFalse()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var missingVertexKey = 1;
+
+            var result = baseGraph.RemoveVertex(missingVertexKey);
+
+            result.ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public void RemoveVertex_ExistingEdges_ReturnsTrueAndRemovesEdges()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var sourceKey = 1;
+            var targetKey = 2;
+            var tertiaryKey = 3;
+            baseGraph.AddVertex(sourceKey);
+            baseGraph.AddVertex(targetKey);
+            baseGraph.AddVertex(tertiaryKey);
+            baseGraph.AddEdge(
+                sourceKey, 
+                targetKey);
+            baseGraph.AddEdge(
+                targetKey,
+                tertiaryKey);
+
+            var result = baseGraph.RemoveVertex(sourceKey);
+            var vertexValue = baseGraph.GetVertexValue(sourceKey);
+            var neighbors = baseGraph.GetNeighbors(1);
+            var edgeResult = baseGraph.IsAdjacent(
+                sourceKey,
+                targetKey);
+            var tertiaryResult = baseGraph.IsAdjacent(
+                targetKey,
+                tertiaryKey);
+
+            result.ShouldBeTrue();
+            neighbors.ShouldNotBeNull();
+            neighbors.ShouldBeEmpty();
+            edgeResult.ShouldBeFalse();
+            tertiaryResult.ShouldBeTrue();
+            vertexValue.ShouldBe(default(string));
         }
     }
 }

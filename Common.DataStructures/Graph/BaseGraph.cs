@@ -180,9 +180,9 @@
 
         public bool RemoveVertex(
             TKey vertexKey)
-        {
-            return Verticies.Remove(vertexKey);
-        }
+            => InEdges.Remove(vertexKey)
+                || OutEdges.Remove(vertexKey)
+                || Verticies.Remove(vertexKey);
 
         public bool SetVertexValue(
             TKey vertexKey, 
