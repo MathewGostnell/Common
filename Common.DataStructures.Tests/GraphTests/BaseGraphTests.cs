@@ -353,21 +353,55 @@
                 tertiaryKey);
 
             var result = baseGraph.RemoveVertex(sourceKey);
-            var vertexValue = baseGraph.GetVertexValue(sourceKey);
-            var neighbors = baseGraph.GetNeighbors(1);
-            var edgeResult = baseGraph.IsAdjacent(
-                sourceKey,
-                targetKey);
-            var tertiaryResult = baseGraph.IsAdjacent(
-                targetKey,
-                tertiaryKey);
 
             result.ShouldBeTrue();
-            neighbors.ShouldNotBeNull();
-            neighbors.ShouldBeEmpty();
-            edgeResult.ShouldBeFalse();
-            tertiaryResult.ShouldBeTrue();
-            vertexValue.ShouldBe(default(string));
+            baseGraph
+                .GetNeighbors(sourceKey)
+                .ShouldBeEmpty();
+            baseGraph.IsAdjacent(
+                    sourceKey,
+                    targetKey)
+                .ShouldBeFalse();
+            baseGraph.IsAdjacent(
+                    targetKey,
+                    tertiaryKey)
+                .ShouldBeTrue();
+            baseGraph
+                .GetVertexValue(sourceKey)
+                .ShouldBe(default(string));
+        }
+
+        [TestMethod]
+        public void SetVertexValue_ExistingVertex_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var vertexKey = 1;
+            var vertexValue = "test";
+            baseGraph.AddVertex(vertexKey);
+
+            var result = baseGraph.SetVertexValue(
+                vertexKey,
+                vertexValue);
+
+            result.ShouldBeTrue();
+            baseGraph
+                .GetVertexValue(vertexKey)
+                .ShouldBe(vertexValue);
+        }
+
+        [TestMethod]
+        public void SetVertexValue_MissingVertex_ThrowsArgumentOutOfRange()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var missingVertexKey = 1;
+
+            Should.Throw<ArgumentOutOfRangeException>(
+                    () =>
+                    baseGraph.SetVertexValue(
+                        missingVertexKey,
+                        "test"))
+                .Message
+                .ShouldContain($"{missingVertexKey}");
         }
     }
 }

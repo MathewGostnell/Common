@@ -190,9 +190,8 @@
         {
             ValidateVertexKey(vertexKey);
 
-            return Verticies.AddOrUpdate(
-                vertexKey,
-                vertexValue);
+            Verticies[vertexKey] = vertexValue;
+            return true;
         }
 
         protected void ValidateVertexKey(
