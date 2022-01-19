@@ -147,17 +147,12 @@
         public bool RemoveEdge(
             TKey sourceKey, 
             TKey targetKey)
-        {
-            ValidateVertexKey(sourceKey);
-            ValidateVertexKey(targetKey);
-
-            return RemoveInEdge(
+            => RemoveInEdge(
                     sourceKey,
                     targetKey)
                 && RemoveOutEdge(
                     sourceKey,
                     targetKey);
-        }
 
         protected bool RemoveInEdge(
             TKey sourceKey,

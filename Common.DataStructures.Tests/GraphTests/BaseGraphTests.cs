@@ -241,5 +241,74 @@
 
             result.ShouldBeTrue();
         }
+
+        [TestMethod]
+        public void RemoveEdge_ExistingEdge_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var sourceKey = 1;
+            var targetKey = 2;
+            baseGraph.AddVertex(sourceKey);
+            baseGraph.AddVertex(targetKey);
+            baseGraph.AddEdge(
+                sourceKey,
+                targetKey);
+
+            var result = baseGraph.RemoveEdge(
+                sourceKey,
+                targetKey);
+
+            result.ShouldBeTrue();
+        }
+
+
+        [TestMethod]
+        public void RemoveEdge_MissingVertex_ReturnsFalse()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var missingVertexKey = 1;
+            
+            var result = baseGraph.RemoveEdge(
+                missingVertexKey,
+                missingVertexKey);
+
+            result.ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public void RemoveEdge_ReversedVertex_ReturnsFalse()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var sourceKey = 1;
+            var targetKey = 2;
+            baseGraph.AddVertex(sourceKey);
+            baseGraph.AddVertex(targetKey);
+            baseGraph.AddEdge(
+                sourceKey,
+                targetKey);
+
+            var result = baseGraph.RemoveEdge(
+                targetKey,
+                sourceKey);
+
+            result.ShouldBeFalse();
+        }
+
+        [TestMethod]
+        public void RemoveEdge_SelfEdgeVertex_ReturnsTrue()
+        {
+            var baseGraph = new BaseGraph<int, string>();
+            var vertexKey= 1;
+            baseGraph.AddVertex(vertexKey);
+            baseGraph.AddEdge(
+                vertexKey, 
+                vertexKey);
+
+            var result = baseGraph.RemoveEdge(
+                vertexKey,
+                vertexKey);
+
+            result.ShouldBeTrue();
+        }
     }
 }
