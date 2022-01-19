@@ -58,11 +58,14 @@
         [TestMethod]
         public void AddOrUpdate_NullDictionary_ThrowsNullReferenceException()
         {
-            IDictionary<string, int> dictionary = null;
+            IDictionary<string, int>? dictionary = null;
 
+            // removed null reference warning as that is the scope of this test.
+            #pragma warning disable CS8604
             Should.Throw<NullReferenceException>(
                 () => 
                 dictionary.AddOrUpdate("throws exception", -1));
+            #pragma warning restore CS8604
         }
     }
 }

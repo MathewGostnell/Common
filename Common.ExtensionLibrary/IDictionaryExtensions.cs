@@ -5,9 +5,9 @@
     public static class IDictionaryExtensions
     {
         public static bool AddOrUpdate<TKey, TValue>(
-            this IDictionary<TKey, TValue> dictionary,
+            this IDictionary<TKey, TValue?> dictionary,
             TKey key,
-            TValue value = default)
+            TValue? value = default)
         {
             if (dictionary.ContainsKey(key))
             {
