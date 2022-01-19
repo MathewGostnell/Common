@@ -2,17 +2,17 @@
 {
     using System;
 
-    internal interface IWeightedGraph<TKey, TVertex, TWeight> 
+    public interface IWeightedGraph<TKey, TVertex, TWeight> 
         : IGraph<TKey, TVertex>
         where TKey : IEquatable<TKey>
     {
-        public TWeight GetEdgeWeight(
+        public TWeight? GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey);
 
-        public void SetEdgeWeight(
+        public bool SetEdgeWeight(
             TKey sourceKey,
             TKey targetKey,
-            TWeight weight);
+            TWeight? weight);
     }
 }

@@ -1,26 +1,25 @@
 ﻿namespace Common.DataStructures.Graph
 {
     using Common.DataStructures.Graph.Contracts;
-    using Common.ExtensionLibrary;
     using System;
     using System.Collections.Generic;
 
-    public class BaseGraph<TKey, TVertex> : IGraph<TKey, TVertex>
+    public abstract class BaseGraph<TKey, TVertex, TWeight> : IGraph<TKey, TVertex>
         where TKey : IEquatable<TKey>
     {
         public BaseGraph()
         {
-            InEdges = new Dictionary<TKey, IList<TKey>>();
-            OutEdges = new Dictionary<TKey, IList<TKey>>();
+            InEdges = new Dictionary<TKey, IDictionary<TKey, TWeight?>>();
+            OutEdges = new Dictionary<TKey, IDictionary<TKey, TWeight?>>();
             Verticies = new Dictionary<TKey, TVertex?>();
         }
 
-        protected IDictionary<TKey, IList<TKey>> InEdges
+        protected IDictionary<TKey, IDictionary<TKey, TWeight?>> InEdges
         {
             get;
         }
 
-        protected IDictionary<TKey, IList<TKey>> OutEdges
+        protected IDictionary<TKey, IDictionary<TKey, TWeight?>> OutEdges
         {
             get;
         }
@@ -31,28 +30,28 @@
         }
 
         protected bool AddEdge(
-            IDictionary<TKey, IList<TKey>> dictionary,
+            IDictionary<TKey, IDictionary<TKey, TWeight?>> dictionary,
             TKey primaryKey,
             TKey secondaryKey)
         {
             if (dictionary.ContainsKey(primaryKey))
             {
-                if (dictionary[primaryKey].Contains(secondaryKey))
+                if (dictionary[primaryKey].ContainsKey(secondaryKey))
                 {
                     return false;
                 }
 
-                var neighbors = dictionary[primaryKey];
-                neighbors.Add(secondaryKey);
-                dictionary[primaryKey] = neighbors;
+                dictionary[primaryKey].Add(
+                    secondaryKey,
+                    default);
                 return true;
             }
 
             dictionary.Add(
                 primaryKey,
-                new List<TKey>
+                new Dictionary<TKey, TWeight?>
                 {
-                    secondaryKey
+                    { secondaryKey, default }
                 });
             return true;
         }
@@ -105,15 +104,25 @@
         public IList<KeyValuePair<TKey, TVertex?>> GetNeighbors(
             TKey sourceKey)
         {
-            var inEdges = InEdges.ContainsKey(sourceKey)
-                ? InEdges[sourceKey]
-                : new List<TKey>();
-            var outEdges = OutEdges.ContainsKey(sourceKey)
-                ? OutEdges[sourceKey]
-                : new List<TKey>();
+            IEnumerable<TKey> neighbors = new List<TKey>();
 
-            return inEdges.Union(outEdges)
-                .Distinct()
+            if (InEdges.ContainsKey(sourceKey))
+            {
+                neighbors = neighbors.Union(
+                    InEdges[sourceKey].Select(
+                        dictionary =>
+                        dictionary.Key));
+            }
+
+            if (OutEdges.ContainsKey(sourceKey))
+            {
+                neighbors = neighbors.Union(
+                    OutEdges[sourceKey].Select(
+                        dictionary =>
+                        dictionary.Key));
+            }
+
+            return neighbors
                 .Select(
                     vertexKey =>
                     new KeyValuePair<TKey, TVertex?>(
@@ -132,7 +141,7 @@
             TKey sourceKey, 
             TKey targetKey)
             => OutEdges.ContainsKey(sourceKey)
-                && OutEdges[sourceKey].Contains(targetKey);
+                && OutEdges[sourceKey].ContainsKey(targetKey);
 
         public bool RemoveEdge(
             TKey sourceKey, 
@@ -192,9 +201,8 @@
                 return;
             }
 
-            throw new ArgumentOutOfRangeException(
-                nameof(vertexKey),
-                $"A vertex with a key of {vertexKey} does not exist.");
+            throw new KeyNotFoundException(
+                $"Vertex (key: {vertexKey}) was not found.");
         }
     }
 }
