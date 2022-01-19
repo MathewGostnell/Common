@@ -30,73 +30,63 @@
             get;
         }
 
+        protected bool AddEdge(
+            IDictionary<TKey, IList<TKey>> dictionary,
+            TKey primaryKey,
+            TKey secondaryKey)
+        {
+            if (dictionary.ContainsKey(primaryKey))
+            {
+                if (dictionary[primaryKey].Contains(secondaryKey))
+                {
+                    return false;
+                }
+
+                var neighbors = dictionary[primaryKey];
+                neighbors.Add(secondaryKey);
+                dictionary[primaryKey] = neighbors;
+                return true;
+            }
+
+            dictionary.Add(
+                primaryKey,
+                new List<TKey>
+                {
+                    secondaryKey
+                });
+            return true;
+        }
+
         public bool AddEdge(
             TKey sourceKey, 
             TKey targetKey)
         {
             ValidateVertexKey(sourceKey);
             ValidateVertexKey(targetKey);
-
-            var addedEdge = true;
-            addedEdge &= AddInEdge(
-                sourceKey,
-                targetKey);
-            addedEdge &= AddOutEdge(
-                sourceKey,
-                targetKey);
-
-            return addedEdge;
+            
+            return AddInEdge(
+                    sourceKey,
+                    targetKey)
+                && AddOutEdge(
+                    sourceKey,
+                    targetKey);
         }
 
         protected bool AddInEdge(
             TKey sourceKey,
             TKey targetKey)
-        {
-            if (InEdges.ContainsKey(targetKey))
-            {
-                if (InEdges[targetKey].Contains(sourceKey))
-                {
-                    return false;
-                }
-
-                InEdges[targetKey].Add(sourceKey);
-                return false;
-            }
-
-            InEdges.Add(
+            => AddEdge(
+                InEdges,
                 targetKey,
-                new List<TKey>
-                {
-                    sourceKey
-                });
-            return true;
-        }
+                sourceKey);
 
         protected bool AddOutEdge(
             TKey sourceKey,
             TKey targetKey)
-        {
-            if (OutEdges.ContainsKey(sourceKey))
-            {
-                if (OutEdges[sourceKey].Contains(targetKey))
-                {
-                    return false;
-                }
-
-                var neighbors = OutEdges[sourceKey];
-                neighbors.Add(targetKey);
-                OutEdges[sourceKey] = neighbors;
-                return false;
-            }
-
-            OutEdges.Add(
+            => AddEdge(
+                OutEdges,
                 sourceKey,
-                new List<TKey>
-                {
-                    targetKey
-                });
-            return true;
-        }
+                targetKey);
 
         public bool AddVertex(
             TKey vertexKey)
