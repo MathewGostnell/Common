@@ -1,6 +1,6 @@
 ﻿namespace Common.Algorithms.Graph
 {
-    using Common.DataStructures.Graph.Contracts;
+    using Common.DataStructures.Contracts;
     using Common.ExtensionLibrary;
     using System;
     using System.Collections.Generic;
@@ -22,7 +22,7 @@
 
             foreach(
                 var vertex 
-                in weightedGraph.GetVertices())
+                in weightedGraph.Vertices)
             {
                 vertexCount++;
                 if (hasAddedSeedVertex)
@@ -61,18 +61,18 @@
                     .GetNeighbors(lowestCost.Key)
                     .Where(
                         neighbor => 
-                        !minimumSpanningTree.ContainsKey(neighbor.Key));
+                        !minimumSpanningTree.ContainsKey(neighbor));
                 foreach(
                     var neighbor
                     in neighbors)
                 {
                     var modifiedWeight = weightedGraph.GetEdgeWeight(
                         lowestCost.Key,
-                        neighbor.Key) ?? maximumWeight;
+                        neighbor);
 
-                    if (modifiedWeight.IsLessThan(vertexCosts[neighbor.Key]))
+                    if (modifiedWeight.IsLessThan(vertexCosts[neighbor]))
                     {
-                        vertexCosts[neighbor.Key] = modifiedWeight;
+                        vertexCosts[neighbor] = modifiedWeight;
                     }
                 }
             }
