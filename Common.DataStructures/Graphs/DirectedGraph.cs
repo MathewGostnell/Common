@@ -42,8 +42,13 @@
             var edge = new WeightedEdge<TKey, int>(
                 sourceKey,
                 targetKey,
-                1);
-            var nodeEdge = new LinkedListNode<TEdge>(edge as TEdge);
+                1) as TEdge;
+            if (edge is null)
+            {
+                return false;
+            }
+
+            var nodeEdge = new LinkedListNode<TEdge>(edge);
             AdjacencyList[sourceKey].AddLast(nodeEdge);
             return true;
         }
