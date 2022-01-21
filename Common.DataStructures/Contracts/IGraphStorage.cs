@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public interface IGraphStorage<TEdge, TKey, TValue>
+    public interface IGraphStorage<TEdge, TKey, TNode>
         where TEdge : IEdge<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -25,7 +25,7 @@
 
         public ICollection<TKey> GetNodes();
 
-        public TValue? GetNodeValue(
+        public TNode? GetNodeValue(
             TKey nodeKey);
 
         public bool RemoveEdge(
@@ -37,6 +37,6 @@
 
         public bool SetNodeValue(
             TKey nodeKey,
-            TValue? nodeValue);
+            TNode? nodeValue);
     }
 }

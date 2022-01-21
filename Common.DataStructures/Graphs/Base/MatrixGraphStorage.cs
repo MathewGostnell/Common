@@ -4,13 +4,13 @@
     using System;
     using System.Collections.Generic;
 
-    public class MatrixGraphStorage<TKey, TNode, TWeight> : IWeightedGraphStorage<TKey, TNode, TWeight>
+    public class MatrixGraphStorage<TKey, TNode, TWeight> : IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight>
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
         public MatrixGraphStorage(
             bool isDirected = false,
-            TWeight offWeight = default)
+            TWeight? offWeight = default)
         {
             EdgeWeights = new TWeight?[0, 0];
             IsDirected = isDirected;
@@ -47,7 +47,7 @@
             get;
         }
 
-        public virtual TWeight OffWeight
+        public virtual TWeight? OffWeight
         {
             get;
         }
@@ -143,7 +143,7 @@
 
             var indexToExclude = NodeIndex[vertexKeyToExclude];
             var newMatrixSize = EdgeWeights.Length - 1;
-            var newEdgeMatrix = new TWeight[newMatrixSize, newMatrixSize];
+            var newEdgeMatrix = new TWeight?[newMatrixSize, newMatrixSize];
 
             for (int sourceIndex = 0;
                 sourceIndex < EdgeWeights.Length;
@@ -235,7 +235,9 @@
                     continue;
                 }
 
-                if (!EdgeWeights[sourceNodeIndex, neighborNodeIndex].Equals(OffWeight))
+                var edgeWeight = EdgeWeights[sourceNodeIndex, neighborNodeIndex];
+                if (edgeWeight is not null
+                    && edgeWeight.CompareTo(OffWeight) != 0)
                 {
                     neighbors.Add(neighborKey);
                 }
@@ -305,7 +307,7 @@
         public bool SetEdgeWeight(
             TKey sourceKey, 
             TKey targetKey,
-            TWeight weight)
+            TWeight? weight)
             => SetEdgeState(
                 sourceKey,
                 targetKey,
@@ -324,7 +326,7 @@
             return true;
         }
 
-        public TWeight GetEdgeWeight(
+        public TWeight? GetEdgeWeight(
             TKey sourceKey, 
             TKey targetKey)
         {

@@ -3,16 +3,16 @@
     using Common.DataStructures.Contracts;
     using System.Collections.Generic;
 
-    public class Graph<TKey, TNode> : IGraphStorage<IEdge<TKey> , TKey, TNode>
+    public class Graph<TKey, TNode> : IGraphStorage<Edge<TKey>, TKey, TNode>
         where TKey : IEquatable<TKey>
     {
         public Graph(
-            IGraphStorage<IEdge<TKey>, TKey, TNode> storage)
+            IGraphStorage<Edge<TKey>, TKey, TNode> storage)
         {
             Storage = storage;
         }
 
-        public IGraphStorage<IEdge<TKey>, TKey, TNode> Storage
+        public IGraphStorage<Edge<TKey>, TKey, TNode> Storage
         {
             get;
         }
@@ -35,7 +35,7 @@
                 sourceNodeKey,
                 neighborNodeKey);
 
-        public ICollection<IEdge<TKey>> GetEdges()
+        public ICollection<Edge<TKey>> GetEdges()
             => Storage.GetEdges();
 
         public virtual ICollection<TKey> GetNeighbors(

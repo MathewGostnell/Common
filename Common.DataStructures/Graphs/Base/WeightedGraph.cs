@@ -4,17 +4,17 @@
     using System;
     using System.Collections.Generic;
 
-    public class WeightedGraph<TKey, TNode, TWeight> : IWeightedGraphStorage<TKey, TNode, TWeight>
+    public class WeightedGraph<TKey, TNode, TWeight> : IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight>
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
         public WeightedGraph(
-            IWeightedGraphStorage<TKey, TNode, TWeight> weightedGraphStorage)
+            IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight> weightedGraphStorage)
         {
             Storage = weightedGraphStorage;
         }
 
-        protected IWeightedGraphStorage<TKey, TNode, TWeight> Storage
+        protected IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight> Storage
         {
             get;
         }
@@ -40,7 +40,7 @@
         public ICollection<IWeightedEdge<TKey, TWeight>> GetEdges()
             => Storage.GetEdges();
 
-        public TWeight GetEdgeWeight(
+        public TWeight? GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey)
             => Storage.GetEdgeWeight(
@@ -72,7 +72,7 @@
         public bool SetEdgeWeight(
             TKey sourceKey,
             TKey targetKey,
-            TWeight weight)
+            TWeight? weight)
             => Storage.SetEdgeWeight(
                 sourceKey,
                 targetKey,

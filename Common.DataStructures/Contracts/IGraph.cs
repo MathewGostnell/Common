@@ -1,10 +1,9 @@
 ﻿namespace Common.DataStructures.Contracts
 {
-    public interface IGraph<TEdge, TKey, TNode> : IGraphStorage<TEdge, TKey, TNode>
-        where TEdge : IEdge<TKey>
+    public interface IGraph<TKey, TNode>
         where TKey : IEquatable<TKey>
     {
-        public ICollection<TEdge> Edges
+        public ICollection<IEdge<TKey>> Edges
         {
             get;
         }

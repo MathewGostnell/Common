@@ -3,7 +3,7 @@
     using Common.DataStructures.Contracts;
     using System;
 
-    internal class WeightedEdge<TKey, TWeight> : Edge<TKey>, IWeightedEdge<TKey, TWeight>
+    public class WeightedEdge<TKey, TWeight> : Edge<TKey>, IWeightedEdge<TKey, TWeight>
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
