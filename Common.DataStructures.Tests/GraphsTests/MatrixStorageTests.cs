@@ -3,7 +3,6 @@
     using Common.DataStructures.Graphs.Base;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Shouldly;
-    using System.Linq;
 
     [TestClass]
     public class MatrixStorageTests
@@ -30,7 +29,7 @@
         [TestMethod]
         public void AddEdge_MissingNode_ReturnsFalse()
         {
-            var graphStorage = new MatrixGraphStorage<int, string, int>();
+            var graphStorage = new MatrixGraphStorage<int, string, int>(-1);
 
             var addedEdge = graphStorage.AddEdge(-1, 0);
 
@@ -40,7 +39,7 @@
         [TestMethod]
         public void AddEdge_NewEdge_ReturnsTrue()
         {
-            var graphStorage = new MatrixGraphStorage<int, string, int>();
+            var graphStorage = new MatrixGraphStorage<int, string, int>(-1);
             var sourceNodeKey = 0;
             var targetNodeKey = 1;
             graphStorage.AddNode(sourceNodeKey);

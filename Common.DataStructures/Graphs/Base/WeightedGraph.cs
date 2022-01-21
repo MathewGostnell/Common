@@ -40,7 +40,7 @@
         public ICollection<IWeightedEdge<TKey, TWeight>> GetEdges()
             => Storage.GetEdges();
 
-        public TWeight? GetEdgeWeight(
+        public TWeight GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey)
             => Storage.GetEdgeWeight(
@@ -72,7 +72,7 @@
         public bool SetEdgeWeight(
             TKey sourceKey,
             TKey targetKey,
-            TWeight? weight)
+            TWeight weight)
             => Storage.SetEdgeWeight(
                 sourceKey,
                 targetKey,

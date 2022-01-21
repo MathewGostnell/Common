@@ -9,10 +9,10 @@
         where TWeight : IComparable<TWeight>
     {
         public MatrixGraphStorage(
-            bool isDirected = false,
-            TWeight? offWeight = default)
+            TWeight offWeight,
+            bool isDirected = false)
         {
-            EdgeWeights = new TWeight?[0, 0];
+            EdgeWeights = new TWeight[0, 0];
             IsDirected = isDirected;
             NodeIndex = new Dictionary<TKey, int>();
             NodeIndexTracker = 0;
@@ -20,7 +20,7 @@
             OffWeight = offWeight;
         }
 
-        protected TWeight?[,] EdgeWeights
+        protected TWeight[,] EdgeWeights
         {
             get;
             set;
@@ -47,7 +47,7 @@
             get;
         }
 
-        public virtual TWeight? OffWeight
+        public virtual TWeight OffWeight
         {
             get;
         }
@@ -57,7 +57,8 @@
             TKey neighborNodeKey)
             => SetEdgeState(
                 sourceNodeKey,
-                neighborNodeKey);
+                neighborNodeKey,
+                OffWeight);
 
         public bool AddNode(
             TKey nodeKey)
@@ -69,7 +70,7 @@
 
             NodeMapping.Add(
                 nodeKey,
-                default(TNode));
+                default);
             NodeIndex.Add(
                 nodeKey,
                 NodeIndexTracker++);
@@ -101,7 +102,7 @@
         protected void CopyEdgesToNewArray(
             int newSize)
         {
-            var newEdgeMatrix = new TWeight?[newSize, newSize];
+            var newEdgeMatrix = new TWeight[newSize, newSize];
             int edgeWeightsLength = (int)Math.Sqrt(EdgeWeights.Length);
             for (int sourceIndex = 0;
                 sourceIndex < edgeWeightsLength;
@@ -144,7 +145,7 @@
 
             var indexToExclude = NodeIndex[vertexKeyToExclude];
             var newMatrixSize = EdgeWeights.Length - 1;
-            var newEdgeMatrix = new TWeight?[newMatrixSize, newMatrixSize];
+            var newEdgeMatrix = new TWeight[newMatrixSize, newMatrixSize];
 
             for (int sourceIndex = 0;
                 sourceIndex < EdgeWeights.Length;
@@ -261,7 +262,8 @@
             TKey neighborNodeKey)
             => SetEdgeState(
                 sourceNodeKey,
-                neighborNodeKey);
+                neighborNodeKey,
+                OffWeight);
 
         public bool RemoveNode(
             TKey nodeKey)
@@ -279,7 +281,7 @@
         protected bool SetEdgeState(
             TKey sourceKey,
             TKey targetKey,
-            TWeight? weightState = default)
+            TWeight weightState)
         {
             if (!NodeIndex.ContainsKey(sourceKey)
                 || !NodeIndex.ContainsKey(targetKey))
@@ -308,7 +310,7 @@
         public bool SetEdgeWeight(
             TKey sourceKey, 
             TKey targetKey,
-            TWeight? weight)
+            TWeight weight)
             => SetEdgeState(
                 sourceKey,
                 targetKey,
@@ -327,14 +329,14 @@
             return true;
         }
 
-        public TWeight? GetEdgeWeight(
+        public TWeight GetEdgeWeight(
             TKey sourceKey, 
             TKey targetKey)
         {
             if (!NodeIndex.ContainsKey(sourceKey)
                 || !NodeIndex.ContainsKey(targetKey))
             {
-                return default;
+                return OffWeight;
             }
 
             int sourceNodeIndex = NodeIndex[sourceKey];
@@ -342,7 +344,7 @@
             if (sourceNodeIndex >= EdgeWeights.Length
                 || targetNodeIndex >= EdgeWeights.Length)
             {
-                return default;
+                return OffWeight;
             }
 
             return EdgeWeights[sourceNodeIndex, targetNodeIndex];
