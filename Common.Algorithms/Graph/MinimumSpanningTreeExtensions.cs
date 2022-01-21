@@ -10,14 +10,14 @@
     {
         public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TNode, TWeight>(
             this IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight> weightedGraph,
-            TWeight? minimumWeight,
-            TWeight? maximumWeight)
+            TWeight minimumWeight,
+            TWeight maximumWeight)
             where TKey : IEquatable<TKey>
             where TWeight : IComparable<TWeight>
         {
-            var minimumSpanningTree = new Dictionary<TKey, TWeight?>();
+            var minimumSpanningTree = new Dictionary<TKey, TWeight>();
             var vertexCount = 0;
-            var vertexCosts = new Dictionary<TKey, TWeight?>();
+            var vertexCosts = new Dictionary<TKey, TWeight>();
             bool hasAddedSeedVertex = false;
 
             foreach(
@@ -69,9 +69,7 @@
                     var modifiedWeight = weightedGraph.GetEdgeWeight(
                         lowestCost.Key,
                         neighbor);
-
-                    if (modifiedWeight is not null
-                        && modifiedWeight.IsLessThan(vertexCosts[neighbor]))
+                    if (modifiedWeight.IsLessThan(vertexCosts[neighbor]))
                     {
                         vertexCosts[neighbor] = modifiedWeight;
                     }

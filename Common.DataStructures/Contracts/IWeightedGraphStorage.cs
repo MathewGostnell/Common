@@ -7,13 +7,13 @@
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
-        public TWeight? GetEdgeWeight(
+        public TWeight GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey);
 
         public bool SetEdgeWeight(
             TKey sourceKey,
             TKey targetKey,
-            TWeight? weight);
+            TWeight weight);
     }
 }
