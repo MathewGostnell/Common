@@ -10,7 +10,7 @@
         [TestMethod]
         public void AddVertices_EmptyList_ReturnsFalse()
         {
-            var directedGraph = new DirectedGraph<int, string>();
+            var directedGraph = new DirectedGraph<Edge<int>, int, string>();
 
             var addedAll = directedGraph.AddVertices();
 
@@ -20,7 +20,7 @@
         [TestMethod]
         public void AddVertices_NoRepeats_ReturnsTrue()
         {
-            var directedGraph = new DirectedGraph<int, string>();
+            var directedGraph = new DirectedGraph<Edge<int>, int, string>();
 
             var addedAll = directedGraph.AddVertices(0, 1, 3);
 
@@ -30,7 +30,7 @@
         [TestMethod]
         public void DepthFirstSearch_LinearPath_ReturnsFullPath()
         {
-            var directedGraph = new DirectedGraph<int, string>();
+            var directedGraph = new DirectedGraph<Edge<int>, int, string>();
             directedGraph.AddVertices(0, 1, 2, 3, 4, 5);
 
             directedGraph.AddEdge(0, 1);

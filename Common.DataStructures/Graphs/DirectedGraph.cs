@@ -1,19 +1,21 @@
 ﻿namespace Common.DataStructures.Graphs
 {
+    using Common.DataStructures.Contracts;
     using Common.DataStructures.Graphs.Base;
     using System;
     using System.Collections.Generic;
 
-    public class DirectedGraph<TKey, TVertex> : Graph<TKey, TVertex>
+    public class DirectedGraph<TEdge, TKey, TVertex> : Graph<TEdge, TKey, TVertex>
         where TKey : IEquatable<TKey>
+        where TEdge : class, IEdge<TKey>
     {
         public DirectedGraph()
             : base()
         {
-            AdjacencyList = new Dictionary<TKey, LinkedList<TKey>>();
+            AdjacencyList = new Dictionary<TKey, LinkedList<TEdge>>();
         }
 
-        protected IDictionary<TKey, LinkedList<TKey>> AdjacencyList
+        protected IDictionary<TKey, LinkedList<TEdge>> AdjacencyList
         {
             get;
         }
@@ -22,7 +24,7 @@
             TKey sourceKey, 
             TKey targetKey)
         {
-            if (!Vertices.Contains(sourceKey)
+            if (!Vertices.ContainsKey(sourceKey)
                 || !AdjacencyList.ContainsKey(sourceKey))
             {
                 throw new KeyNotFoundException(
@@ -30,22 +32,31 @@
                     new ArgumentOutOfRangeException());
             }
             
-            if (!Vertices.Contains(targetKey)
+            if (!Vertices.ContainsKey(targetKey)
                 || !AdjacencyList.ContainsKey(targetKey))
             {
                 throw new KeyNotFoundException(
                     $"Vertex (key: {targetKey}) was not found.",
                     new ArgumentOutOfRangeException());
             }
+            var edge = new WeightedEdge<TKey, int>(
+                sourceKey,
+                targetKey,
+                1) as TEdge;
+            if (edge is null)
+            {
+                return false;
+            }
 
-            AdjacencyList[sourceKey].AddLast(targetKey);
+            var nodeEdge = new LinkedListNode<TEdge>(edge);
+            AdjacencyList[sourceKey].AddLast(nodeEdge);
             return true;
         }
 
         public override bool AddVertex(
             TKey vertexKey)
         {
-            if (Vertices.Contains(vertexKey))
+            if (Vertices.ContainsKey(vertexKey))
             {
                 return false;
             }
@@ -57,8 +68,10 @@
 
             AdjacencyList.Add(
                 vertexKey,
-                new LinkedList<TKey>());
-            Vertices.Add(vertexKey);
+                new LinkedList<TEdge>());
+            Vertices.Add(
+                vertexKey,
+                default);
             return true;
         }
 
@@ -78,7 +91,7 @@
                 .Select(
                     vertex =>
                     new KeyValuePair<TKey, bool>(
-                        vertex,
+                        vertex.Key,
                         false))
                 as IDictionary<TKey, bool>;
             if (visitedVertices is null)
@@ -96,18 +109,18 @@
                 var currentVertex = queue.First();
                 queue.RemoveFirst();
 
-                var neighbors = AdjacencyList[currentVertex];
+                var relationships = AdjacencyList[currentVertex];
                 foreach(
-                    var neighbor
-                    in neighbors)
+                    var relationship
+                    in relationships)
                 {
-                    if (visitedVertices[neighbor])
+                    if (visitedVertices[relationship.Target])
                     {
                         continue;
                     }
 
-                    visitedVertices[neighbor] = true;
-                    queue.AddLast(neighbor);
+                    visitedVertices[relationship.Target] = true;
+                    queue.AddLast(relationship.Target);
                 }
             }
 
@@ -128,7 +141,7 @@
         {
             var visitedVertices = Vertices
                 .ToDictionary(
-                    vertex => vertex,
+                    vertex => vertex.Key,
                     vertex => false);
 
             if (visitedVertices is null)
@@ -147,19 +160,19 @@
                 var currentVertex = queue.First();
                 queue.RemoveFirst();
 
-                var neighbors = AdjacencyList[currentVertex];
+                var relationships = AdjacencyList[currentVertex];
                 foreach (
-                    var neighbor
-                    in neighbors)
+                    var relationship
+                    in relationships)
                 {
-                    if (visitedVertices[neighbor])
+                    if (visitedVertices[relationship.Target])
                     {
                         continue;
                     }
 
-                    visitedVertices[neighbor] = true;
-                    queue.AddFirst(neighbor);
-                    pathMap[neighbor] = currentVertex;
+                    visitedVertices[relationship.Target] = true;
+                    queue.AddFirst(relationship.Target);
+                    pathMap[relationship.Target] = currentVertex;
                 }
             }
 
@@ -184,20 +197,28 @@
             return path.ToList();
         }
 
-        public override ICollection<TKey> GetNeighbors(TKey sourceKey)
+        public override ICollection<TKey> GetNeighbors(
+            TKey sourceKey)
+            => AdjacencyList[sourceKey]
+                .Select(
+                    edge => 
+                    edge.Target)
+                .ToList();
+
+        public override TVertex? GetVertexValue(
+            TKey vertexKey)
         {
             throw new NotImplementedException();
         }
 
-        public override TVertex? GetVertexValue(TKey vertexKey)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool IsAdjacent(TKey sourceKey, TKey targetKey)
-        {
-            throw new NotImplementedException();
-        }
+        public override bool IsAdjacent(
+            TKey sourceKey, 
+            TKey targetKey)
+            => AdjacencyList[sourceKey]
+                .Any(
+                    node => 
+                    node.Target
+                        .Equals(targetKey));
 
         public override bool RemoveEdge(TKey source, TKey target)
         {

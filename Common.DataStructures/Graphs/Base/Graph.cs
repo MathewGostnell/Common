@@ -3,20 +3,22 @@
     using Common.DataStructures.Contracts;
     using System.Collections.Generic;
 
-    public abstract class Graph<TKey, TVertex> : IGraph<TKey, TVertex>
+    public abstract class Graph<TEdge, TKey, TVertex> : IGraph<TEdge, TKey, TVertex>
+        where TEdge : IEdge<TKey>
+        where TKey : IEquatable<TKey>
     {
         public Graph()
         {
-            Edges = new List<IEdge<TVertex>>();
-            Vertices = new List<TKey>();
+            Edges = new List<TEdge>();
+            Vertices = new Dictionary<TKey, TVertex?>();
         }
 
-        public ICollection<IEdge<TVertex>> Edges
+        public ICollection<TEdge> Edges
         {
             get;
         }
 
-        public ICollection<TKey> Vertices
+        public IDictionary<TKey, TVertex?> Vertices
         {
             get;
         }

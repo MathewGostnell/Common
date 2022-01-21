@@ -1,16 +1,15 @@
 ﻿namespace Common.DataStructures.Contracts
 {
-    using System.Collections.Generic;
-
-    public interface IWeightedGraph<TKey, TVertex, TWeight> : IGraph<TKey, TVertex>
+    public interface IWeightedGraph<TEdge, TKey, TVertex, TWeight> : IGraph<TEdge, TKey, TVertex>
+        where TEdge : IWeightedEdge<TKey, TWeight>
     {
-        public new ICollection<IWeightedEdge<TVertex, TWeight>> Edges
-        {
-            get;
-        }
-
         public TWeight GetEdgeWeight(
             TKey sourceKey,
             TKey targetKey);
+
+        public bool SetEdgeWeight(
+            TKey sourceKey,
+            TKey targetKey,
+            TWeight weight);
     }
 }

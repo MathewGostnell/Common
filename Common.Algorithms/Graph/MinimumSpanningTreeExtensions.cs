@@ -8,11 +8,12 @@
 
     public static class MinimumSpanningTreeExtensions
     {
-        public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TVertex, TWeight>(
-            this IWeightedGraph<TKey, TVertex, TWeight> weightedGraph,
+        public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TEdge, TKey, TVertex, TWeight>(
+            this IWeightedGraph<TEdge, TKey, TVertex, TWeight> weightedGraph,
             TWeight minimumWeight,
             TWeight maximumWeight)
             where TKey : IEquatable<TKey>
+            where TEdge : IWeightedEdge<TKey, TWeight>
             where TWeight : IComparable<TWeight>
         {
             var minimumSpanningTree = new Dictionary<TKey, TWeight>();
@@ -28,13 +29,13 @@
                 if (hasAddedSeedVertex)
                 {
                     vertexCosts.Add(
-                       vertex,
+                       vertex.Key,
                        maximumWeight);
                     continue;
                 }
 
                 vertexCosts.Add(
-                    vertex,
+                    vertex.Key,
                     minimumWeight);
                 hasAddedSeedVertex = true;
             }
