@@ -8,7 +8,6 @@
     [TestClass]
     public class MatrixStorageTests
     {
-        [Ignore]
         [TestMethod]
         public void AddEdge_AddedEdgeWithoutSettingWeight_RetainsInEdges()
         {
@@ -38,7 +37,6 @@
             addedEdge.ShouldBeFalse();
         }
 
-        [Ignore]
         [TestMethod]
         public void AddEdge_NewEdge_ReturnsTrue()
         {

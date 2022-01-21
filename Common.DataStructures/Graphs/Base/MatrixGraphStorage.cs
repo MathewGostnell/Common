@@ -73,7 +73,7 @@
             NodeIndex.Add(
                 nodeKey,
                 NodeIndexTracker++);
-            CopyEdgesToNewArray(NodeIndexTracker + 1);
+            CopyEdgesToNewArray(NodeIndexTracker);
             return true;
         }
 
@@ -102,12 +102,13 @@
             int newSize)
         {
             var newEdgeMatrix = new TWeight?[newSize, newSize];
+            int edgeWeightsLength = (int)Math.Sqrt(EdgeWeights.Length);
             for (int sourceIndex = 0;
-                sourceIndex < EdgeWeights.Length;
+                sourceIndex < edgeWeightsLength;
                 sourceIndex++)
             {
                 for (int targetIndex = 0;
-                    targetIndex < EdgeWeights.Length;
+                    targetIndex < edgeWeightsLength;
                     targetIndex++)
                 {
                     if (sourceIndex >= newSize
@@ -330,7 +331,21 @@
             TKey sourceKey, 
             TKey targetKey)
         {
-            throw new NotImplementedException();
+            if (!NodeIndex.ContainsKey(sourceKey)
+                || !NodeIndex.ContainsKey(targetKey))
+            {
+                return default;
+            }
+
+            int sourceNodeIndex = NodeIndex[sourceKey];
+            int targetNodeIndex = NodeIndex[targetKey];
+            if (sourceNodeIndex >= EdgeWeights.Length
+                || targetNodeIndex >= EdgeWeights.Length)
+            {
+                return default;
+            }
+
+            return EdgeWeights[sourceNodeIndex, targetNodeIndex];
         }
     }
 }

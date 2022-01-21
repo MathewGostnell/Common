@@ -1,6 +1,6 @@
 ﻿namespace Common.Algorithms.Graph
 {
-    using Common.DataStructures.Graphs.Base;
+    using Common.DataStructures.Contracts;
     using Common.ExtensionLibrary;
     using System;
     using System.Collections.Generic;
@@ -9,15 +9,15 @@
     public static class MinimumSpanningTreeExtensions
     {
         public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TNode, TWeight>(
-            this WeightedGraph<TKey, TNode, TWeight> weightedGraph,
-            TWeight minimumWeight,
-            TWeight maximumWeight)
+            this IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight> weightedGraph,
+            TWeight? minimumWeight,
+            TWeight? maximumWeight)
             where TKey : IEquatable<TKey>
             where TWeight : IComparable<TWeight>
         {
-            var minimumSpanningTree = new Dictionary<TKey, TWeight>();
+            var minimumSpanningTree = new Dictionary<TKey, TWeight?>();
             var vertexCount = 0;
-            var vertexCosts = new Dictionary<TKey, TWeight>();
+            var vertexCosts = new Dictionary<TKey, TWeight?>();
             bool hasAddedSeedVertex = false;
 
             foreach(
@@ -70,7 +70,8 @@
                         lowestCost.Key,
                         neighbor);
 
-                    if (modifiedWeight.IsLessThan(vertexCosts[neighbor]))
+                    if (modifiedWeight is not null
+                        && modifiedWeight.IsLessThan(vertexCosts[neighbor]))
                     {
                         vertexCosts[neighbor] = modifiedWeight;
                     }
