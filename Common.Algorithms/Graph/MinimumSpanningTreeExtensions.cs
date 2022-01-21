@@ -1,6 +1,6 @@
 ﻿namespace Common.Algorithms.Graph
 {
-    using Common.DataStructures.Contracts;
+    using Common.DataStructures.Graphs.Base;
     using Common.ExtensionLibrary;
     using System;
     using System.Collections.Generic;
@@ -8,8 +8,8 @@
 
     public static class MinimumSpanningTreeExtensions
     {
-        public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TVertex, TWeight>(
-            this IWeightedGraph<TKey, TVertex, TWeight> weightedGraph,
+        public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TNode, TWeight>(
+            this WeightedGraph<TKey, TNode, TWeight> weightedGraph,
             TWeight minimumWeight,
             TWeight maximumWeight)
             where TKey : IEquatable<TKey>
@@ -22,7 +22,7 @@
 
             foreach(
                 var vertex 
-                in weightedGraph.Vertices)
+                in weightedGraph.GetNodes())
             {
                 vertexCount++;
                 if (hasAddedSeedVertex)

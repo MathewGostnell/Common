@@ -1,47 +1,17 @@
 ﻿namespace Common.DataStructures.Contracts
 {
-    public interface IGraph<TKey, TVertex>
+    public interface IGraph<TEdge, TKey, TNode> : IGraphStorage<TEdge, TKey, TNode>
+        where TEdge : IEdge<TKey>
+        where TKey : IEquatable<TKey>
     {
-        public ICollection<IEdge<TVertex>> Edges
+        public ICollection<TEdge> Edges
         {
             get;
         }
 
-        public ICollection<TKey> Vertices
+        public ICollection<TKey> Nodes
         {
             get;
         }
-
-
-        public bool AddEdge(
-            TKey sourceKey,
-            TKey targetKey);
-
-        public bool AddVertex(
-            TKey vertexKey);
-
-        public bool AddVertices(
-            params TKey[] vertexKeys);
-
-        public bool IsAdjacent(
-            TKey sourceKey,
-            TKey targetKey);
-
-        public ICollection<TKey> GetNeighbors(
-            TKey sourceKey);
-
-        public TVertex? GetVertexValue(
-            TKey vertexKey);
-
-        public bool RemoveEdge(
-            TKey source,
-            TKey target);
-
-        public bool RemoveVertex(
-            TKey vertexKey);
-
-        public bool SetVertexValue(
-            TKey vertexKey,
-            TVertex? vertexValue);
     }
 }

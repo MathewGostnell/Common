@@ -1,7 +1,7 @@
 ﻿namespace Common.Algorithms.Tests.GraphTests
 {
     using Common.Algorithms.Graph;
-    using Common.DataStructures.Graph;
+    using Common.DataStructures.Graphs.Base;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Shouldly;
     using System.Linq;
@@ -12,16 +12,17 @@
         [TestMethod]
         public void GetPrimsMinimumSpanningTree_SampleGraph_ReturnsExpectedTree()
         {
-            var weightedGraph = new WeightedGraph<int, string, int>();
-            weightedGraph.AddVertex(0);
-            weightedGraph.AddVertex(1);
-            weightedGraph.AddVertex(2);
-            weightedGraph.AddVertex(3);
-            weightedGraph.AddVertex(4);
-            weightedGraph.AddVertex(5);
-            weightedGraph.AddVertex(6);
-            weightedGraph.AddVertex(7);
-            weightedGraph.AddVertex(8);
+            var weightedGraph = new WeightedGraph<int, string, int>(
+                new MatrixGraphStorage<int, string, int>());
+            weightedGraph.AddNode(0);
+            weightedGraph.AddNode(1);
+            weightedGraph.AddNode(2);
+            weightedGraph.AddNode(3);
+            weightedGraph.AddNode(4);
+            weightedGraph.AddNode(5);
+            weightedGraph.AddNode(6);
+            weightedGraph.AddNode(7);
+            weightedGraph.AddNode(8);
 
             weightedGraph.AddEdge(0, 1);
             weightedGraph.AddEdge(0, 7);

@@ -1,13 +1,13 @@
 ﻿namespace Common.DataStructures.Contracts
 {
-    public interface IEdge<TVertex>
+    public interface IEdge<TKey>
     {
-        public TVertex Source
+        public TKey Source
         {
             get;
         }
 
-        public TVertex Target
+        public TKey Target
         {
             get;
         }
