@@ -352,7 +352,7 @@
 
         private static IWeightedGraphStorage<TKey, TNode, TWeight> GetGraphStorage<TKey, TNode, TWeight>(
             bool isDirected = false,
-            TWeight offWeight = default)
+            TWeight? offWeight = default)
             where TKey : IEquatable<TKey>
             where TWeight : notnull, IComparable<TWeight>
             => new MatrixGraphStorage<TKey, TNode, TWeight>(
