@@ -1,13 +1,14 @@
 ﻿namespace Common.DataStructures.Contracts
 {
-    public interface IGraph<TKey, TVertex>
+    public interface IGraph<TEdge, TKey, TVertex>
+        where TEdge : IEdge<TKey>
     {
-        public ICollection<IEdge<TVertex>> Edges
+        public ICollection<TEdge> Edges
         {
             get;
         }
 
-        public ICollection<TKey> Vertices
+        public IDictionary<TKey, TVertex?> Vertices
         {
             get;
         }
