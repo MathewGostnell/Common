@@ -4,20 +4,32 @@
     using System;
     using System.Collections.Generic;
 
-    public class MatrixGraphStorage<TKey, TNode, TWeight> : IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight>
+    public class MatrixGraphStorage<TKey, TNode, TWeight> : IWeightedGraphStorage<TKey, TNode, TWeight>
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
         public MatrixGraphStorage(
-            TWeight offWeight,
-            bool isDirected = false)
+            bool isDirected = false,
+            TWeight ? offWeight = default)
         {
+            if (offWeight is null)
+            {
+                throw new ArgumentNullException(nameof(offWeight));
+            }
+
+            EdgeMatrix = new bool[0, 0];
             EdgeWeights = new TWeight[0, 0];
             IsDirected = isDirected;
             NodeIndex = new Dictionary<TKey, int>();
             NodeIndexTracker = 0;
             NodeMapping = new Dictionary<TKey, TNode?>();
             OffWeight = offWeight;
+        }
+
+        protected bool[,] EdgeMatrix
+        {
+            get;
+            set;
         }
 
         protected TWeight[,] EdgeWeights
@@ -31,7 +43,7 @@
             get;
         }
 
-        public IDictionary<TKey, int> NodeIndex
+        protected IDictionary<TKey, int> NodeIndex
         {
             get;
         }
@@ -42,7 +54,7 @@
             protected set;
         }
 
-        public IDictionary<TKey, TNode?> NodeMapping
+        protected IDictionary<TKey, TNode?> NodeMapping
         {
             get;
         }
@@ -50,6 +62,7 @@
         public virtual TWeight OffWeight
         {
             get;
+            protected set;
         }
 
         public bool AddEdge(
@@ -58,6 +71,7 @@
             => SetEdgeState(
                 sourceNodeKey,
                 neighborNodeKey,
+                true,
                 OffWeight);
 
         public bool AddNode(
@@ -83,27 +97,30 @@
             TKey neighborNodeKey)
         {
             if (!NodeIndex.ContainsKey(sourceNodeKey)
-                || NodeIndex.ContainsKey(neighborNodeKey))
+                || !NodeIndex.ContainsKey(neighborNodeKey))
             {
                 return false;
             }
 
             int sourceNodeIndex = NodeIndex[sourceNodeKey];
             int targetNodeIndex = NodeIndex[neighborNodeKey];
-            if (sourceNodeIndex >= EdgeWeights.Length
-                || targetNodeIndex >= EdgeWeights.Length)
+            int edgeWeightLength = GetEdgeWeightsLength();
+            if (sourceNodeIndex >= edgeWeightLength
+                || targetNodeIndex >= edgeWeightLength)
             {
                 return false;
             }
 
-            return EdgeWeights[sourceNodeIndex, targetNodeIndex] != null;
+            return EdgeMatrix[sourceNodeIndex, targetNodeIndex];
         }
 
         protected void CopyEdgesToNewArray(
             int newSize)
         {
-            var newEdgeMatrix = new TWeight[newSize, newSize];
-            int edgeWeightsLength = (int)Math.Sqrt(EdgeWeights.Length);
+            int edgeWeightsLength = GetEdgeWeightsLength();
+            var newEdgeMatrix = new bool[newSize, newSize];
+            var newEdgeWeights = new TWeight[newSize, newSize];
+
             for (int sourceIndex = 0;
                 sourceIndex < edgeWeightsLength;
                 sourceIndex++)
@@ -118,21 +135,13 @@
                         continue;
                     }
 
-                    // TODO resolve index out of bounds error.
-                    newEdgeMatrix[sourceIndex, targetIndex] = EdgeWeights[sourceIndex, targetIndex];
+                    newEdgeMatrix[sourceIndex, targetIndex] = EdgeMatrix[sourceIndex, targetIndex];
+                    newEdgeWeights[sourceIndex, targetIndex] = EdgeWeights[sourceIndex, targetIndex];
                 }
             }
-            EdgeWeights = newEdgeMatrix;
-            if (EdgeWeights is null)
-            {
-                throw new ApplicationException();
-            }
 
-            EdgeWeights = newEdgeMatrix;
-            if (EdgeWeights.Length != newSize * newSize)
-            {
-                throw new ApplicationException();
-            }
+            EdgeMatrix = newEdgeMatrix;
+            EdgeWeights = newEdgeWeights;
         }
 
         protected void CopyEdgesToNewArrayWithoutVertex(
@@ -143,16 +152,19 @@
                 return;
             }
 
+            int edgeWeightsLength = GetEdgeWeightsLength();
             var indexToExclude = NodeIndex[vertexKeyToExclude];
+
             var newMatrixSize = EdgeWeights.Length - 1;
-            var newEdgeMatrix = new TWeight[newMatrixSize, newMatrixSize];
+            var newEdgeMatrix = new bool[newMatrixSize, newMatrixSize];
+            var newEdgeWeights = new TWeight[newMatrixSize, newMatrixSize];
 
             for (int sourceIndex = 0;
-                sourceIndex < EdgeWeights.Length;
+                sourceIndex < edgeWeightsLength;
                 sourceIndex++)
             {
                 for (int targetIndex = 0;
-                    targetIndex < EdgeWeights.Length;
+                    targetIndex < edgeWeightsLength;
                     targetIndex++)
                 {
                     if (sourceIndex >= newMatrixSize
@@ -170,11 +182,13 @@
                         ? targetIndex - 1
                         : targetIndex;
 
-                    newEdgeMatrix[newSourceIndex, newTargetIndex] = EdgeWeights[sourceIndex, targetIndex];
+                    newEdgeWeights[newSourceIndex, newTargetIndex] = EdgeWeights[sourceIndex, targetIndex];
+                    newEdgeMatrix[newSourceIndex, newTargetIndex] = EdgeMatrix[newSourceIndex, newTargetIndex];
                 }
             }
 
-            EdgeWeights = newEdgeMatrix;
+            EdgeMatrix = newEdgeMatrix;
+            EdgeWeights = newEdgeWeights;
         }
 
         public ICollection<IWeightedEdge<TKey, TWeight>> GetEdges()
@@ -190,9 +204,7 @@
                 {
                     int sourceIndex = NodeIndex[sourceKey];
                     int targetIndex = NodeIndex[targetKey];
-                    var edgeWeight = EdgeWeights[sourceIndex, targetIndex];
-                    var isEdge = edgeWeight != null 
-                        && edgeWeight.CompareTo(OffWeight) != 0;
+                    var isEdge = EdgeMatrix[sourceIndex, targetIndex];
                     if (isEdge)
                     {
                         var newEdge = new WeightedEdge<TKey, TWeight>(
@@ -212,6 +224,30 @@
             return edges;
         }
 
+        public TWeight GetEdgeWeight(
+            TKey sourceKey,
+            TKey targetKey)
+        {
+            if (!NodeIndex.ContainsKey(sourceKey)
+                || !NodeIndex.ContainsKey(targetKey))
+            {
+                return OffWeight;
+            }
+
+            int sourceNodeIndex = NodeIndex[sourceKey];
+            int targetNodeIndex = NodeIndex[targetKey];
+            if (sourceNodeIndex >= EdgeWeights.Length
+                || targetNodeIndex >= EdgeWeights.Length)
+            {
+                return OffWeight;
+            }
+
+            return EdgeWeights[sourceNodeIndex, targetNodeIndex];
+        }
+
+        protected int GetEdgeWeightsLength()
+            => (int)Math.Sqrt(EdgeWeights.Length);
+
         public ICollection<TKey> GetNeighbors(
             TKey sourceNodeKey)
         {
@@ -221,8 +257,9 @@
                 return neighbors;
             }
 
+            var edgeWeightsLength = GetEdgeWeightsLength();
             int sourceNodeIndex = NodeIndex[sourceNodeKey];
-            if (sourceNodeIndex >= EdgeWeights.Length)
+            if (sourceNodeIndex >= edgeWeightsLength)
             {
                 return neighbors;
             }
@@ -232,14 +269,15 @@
                 in NodeIndex.Keys)
             {
                 int neighborNodeIndex = NodeIndex[neighborKey];
-                if (neighborNodeIndex >= EdgeWeights.Length)
+                if (neighborNodeIndex >= edgeWeightsLength)
                 {
                     continue;
                 }
 
-                var edgeWeight = EdgeWeights[sourceNodeIndex, neighborNodeIndex];
-                if (edgeWeight is not null
-                    && edgeWeight.CompareTo(OffWeight) != 0)
+                var areAdjacent = EdgeMatrix[sourceNodeIndex, neighborNodeIndex]
+                    || (!IsDirected
+                        && EdgeMatrix[neighborNodeIndex, sourceNodeIndex]);
+                if (areAdjacent)
                 {
                     neighbors.Add(neighborKey);
                 }
@@ -263,6 +301,7 @@
             => SetEdgeState(
                 sourceNodeKey,
                 neighborNodeKey,
+                false,
                 OffWeight);
 
         public bool RemoveNode(
@@ -281,6 +320,7 @@
         protected bool SetEdgeState(
             TKey sourceKey,
             TKey targetKey,
+            bool areAdjacent,
             TWeight weightState)
         {
             if (!NodeIndex.ContainsKey(sourceKey)
@@ -289,20 +329,35 @@
                 return false;
             }
 
-            int sourceIndex = NodeIndex[sourceKey];
+            int edgeWeightsLength = GetEdgeWeightsLength();
             int neighborIndex = NodeIndex[targetKey];
-            if (sourceIndex >= EdgeWeights.Length
-                || neighborIndex >= EdgeWeights.Length)
+            int sourceIndex = NodeIndex[sourceKey];
+            if (sourceIndex >= edgeWeightsLength
+                || neighborIndex >= edgeWeightsLength)
             {
                 return false;
             }
 
-            EdgeWeights[sourceIndex, neighborIndex] = weightState;
-            if (IsDirected)
+            var isEdge = EdgeMatrix[sourceIndex, neighborIndex];
+            if (!(areAdjacent || isEdge))
+            {
+                return false;
+            }
+
+            EdgeMatrix[sourceIndex, neighborIndex] = areAdjacent;
+            if (weightState is null)
             {
                 return true;
             }
 
+            EdgeWeights[sourceIndex, neighborIndex] = weightState;
+            if (IsDirected
+                || sourceIndex == neighborIndex)
+            {
+                return true;
+            }
+
+            EdgeMatrix[neighborIndex, sourceIndex] = areAdjacent;
             EdgeWeights[neighborIndex, sourceIndex] = weightState;
             return true;
         }
@@ -314,6 +369,7 @@
             => SetEdgeState(
                 sourceKey,
                 targetKey,
+                true,
                 weight);
 
         public bool SetNodeValue(
@@ -327,27 +383,6 @@
 
             NodeMapping[nodeKey] = nodeValue;
             return true;
-        }
-
-        public TWeight GetEdgeWeight(
-            TKey sourceKey, 
-            TKey targetKey)
-        {
-            if (!NodeIndex.ContainsKey(sourceKey)
-                || !NodeIndex.ContainsKey(targetKey))
-            {
-                return OffWeight;
-            }
-
-            int sourceNodeIndex = NodeIndex[sourceKey];
-            int targetNodeIndex = NodeIndex[targetKey];
-            if (sourceNodeIndex >= EdgeWeights.Length
-                || targetNodeIndex >= EdgeWeights.Length)
-            {
-                return OffWeight;
-            }
-
-            return EdgeWeights[sourceNodeIndex, targetNodeIndex];
         }
     }
 }

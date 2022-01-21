@@ -9,7 +9,7 @@
     public static class MinimumSpanningTreeExtensions
     {
         public static IDictionary<TKey, TWeight> GetPrimsMinimumSpanningTree<TKey, TNode, TWeight>(
-            this IWeightedGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode, TWeight> weightedGraph,
+            this IWeightedGraphStorage<TKey, TNode, TWeight> weightedGraph,
             TWeight minimumWeight,
             TWeight maximumWeight)
             where TKey : IEquatable<TKey>

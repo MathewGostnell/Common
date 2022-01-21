@@ -2,8 +2,7 @@
 {
     using System;
 
-    public interface IWeightedGraphStorage<TEdge, TKey, TNode, TWeight> : IGraphStorage<TEdge, TKey, TNode>
-        where TEdge : IWeightedEdge<TKey, TWeight>
+    public interface IWeightedGraphStorage<TKey, TNode, TWeight> : IGraphStorage<IWeightedEdge<TKey, TWeight>, TKey, TNode>
         where TKey : IEquatable<TKey>
         where TWeight : IComparable<TWeight>
     {
