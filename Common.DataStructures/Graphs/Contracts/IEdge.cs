@@ -1,15 +1,14 @@
-﻿namespace Common.DataStructures.Graphs.Contracts
-{
-    public interface IEdge<TKey>
-    {
-        public TKey Source
-        {
-            get;
-        }
+﻿namespace Common.DataStructures.Graphs.Contracts;
 
-        public TKey Target
-        {
-            get;
-        }
+public interface IEdge<TKey>
+{
+    public TKey Source
+    {
+        get;
+    }
+
+    public TKey Target
+    {
+        get;
     }
 }

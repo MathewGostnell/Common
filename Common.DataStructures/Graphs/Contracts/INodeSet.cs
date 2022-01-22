@@ -1,22 +1,21 @@
-﻿namespace Common.DataStructures.Graphs.Contracts
+﻿namespace Common.DataStructures.Graphs.Contracts;
+
+using System.Collections.Generic;
+
+public interface INodeSet<TKey> : IImplicitNodeSet<TKey>
 {
-    using System.Collections.Generic;
-
-    public interface INodeSet<TKey> : IImplicitNodeSet<TKey>
+    public bool AreNodesEmpty
     {
-        public bool AreNodesEmpty
-        {
-            get;
-        }
+        get;
+    }
 
-        public int NodeCount
-        {
-            get;
-        }
+    public int NodeCount
+    {
+        get;
+    }
 
-        public IEnumerable<TKey> Nodes
-        {
-            get;
-        }
+    public IEnumerable<TKey> Nodes
+    {
+        get;
     }
 }

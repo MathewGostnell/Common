@@ -1,5 +1,8 @@
 ﻿namespace Common.DataStructures.Graphs.Contracts;
 
+using Common.DataStructures.Graphs.Actions;
+using Common.DataStructures.Graphs.Predicates;
+
 public interface IMutableEdgeListGraph<TKey, TEdge>
     : IMutableGraph<TKey, TEdge>,
         IEdgeListGraph<TKey, TEdge>

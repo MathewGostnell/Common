@@ -1,23 +1,22 @@
-﻿namespace Common.DataStructures.Graphs.Contracts
+﻿namespace Common.DataStructures.Graphs.Contracts;
+
+using System.Collections.Generic;
+
+public interface IEdgeSet<TKey, TEdge>
+    where TEdge : IEdge<TKey>
 {
-    using System.Collections.Generic;
-
-    public interface IEdgeSet<TKey, TEdge>
-        where TEdge : IEdge<TKey>
+    public bool AreEdgesEmpty
     {
-        public bool AreEdgesEmpty
-        {
-            get;
-        }
+        get;
+    }
 
-        public int EdgeCount
-        {
-            get;
-        }
+    public int EdgeCount
+    {
+        get;
+    }
 
-        public IEnumerable<TEdge> Edges
-        {
-            get;
-        }
+    public IEnumerable<TEdge> Edges
+    {
+        get;
     }
 }

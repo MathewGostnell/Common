@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 [TestClass]
-public class IEnumerableExtensions
+public class IEnumerableExtensionsTests
 {
     [TestMethod]
     public void IsEmpty_EmptyList_ReturnsTrue()

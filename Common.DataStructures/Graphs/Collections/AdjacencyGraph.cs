@@ -1,6 +1,8 @@
-﻿namespace Common.DataStructures.Graphs;
+﻿namespace Common.DataStructures.Graphs.Collections;
 
+using Common.DataStructures.Graphs.Actions;
 using Common.DataStructures.Graphs.Contracts;
+using Common.DataStructures.Graphs.Predicates;
 using Common.ExtensionLibrary;
 using System.Collections.Generic;
 

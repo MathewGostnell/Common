@@ -1,24 +1,23 @@
-﻿namespace Common.ExtensionLibrary
+﻿namespace Common.ExtensionLibrary;
+
+using System.Collections.Generic;
+
+public static class IDictionaryExtensions
 {
-    using System.Collections.Generic;
-
-    public static class IDictionaryExtensions
+    public static bool AddOrUpdate<TKey, TValue>(
+        this IDictionary<TKey, TValue?> dictionary,
+        TKey key,
+        TValue? value = default)
     {
-        public static bool AddOrUpdate<TKey, TValue>(
-            this IDictionary<TKey, TValue?> dictionary,
-            TKey key,
-            TValue? value = default)
+        if (dictionary.ContainsKey(key))
         {
-            if (dictionary.ContainsKey(key))
-            {
-                dictionary[key] = value;
-                return false;
-            }
-
-            dictionary.Add(
-                key,
-                value);
-            return true;
+            dictionary[key] = value;
+            return false;
         }
+
+        dictionary.Add(
+            key,
+            value);
+        return true;
     }
 }

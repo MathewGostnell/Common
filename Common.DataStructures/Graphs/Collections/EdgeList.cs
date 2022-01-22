@@ -1,4 +1,4 @@
-﻿namespace Common.DataStructures.Graphs;
+﻿namespace Common.DataStructures.Graphs.Collections;
 
 using Common.DataStructures.Graphs.Contracts;
 using System;

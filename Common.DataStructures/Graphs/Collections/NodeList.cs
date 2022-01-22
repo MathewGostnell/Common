@@ -1,4 +1,5 @@
-﻿namespace Common.DataStructures.Graphs;
+﻿namespace Common.DataStructures.Graphs.Collections;
+
 public sealed class NodeList<TKey>
     : List<TKey>,
         ICloneable

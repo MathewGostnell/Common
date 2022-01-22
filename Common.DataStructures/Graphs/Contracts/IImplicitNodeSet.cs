@@ -1,8 +1,7 @@
-﻿namespace Common.DataStructures.Graphs.Contracts
+﻿namespace Common.DataStructures.Graphs.Contracts;
+
+public interface IImplicitNodeSet<TKey>
 {
-    public interface IImplicitNodeSet<TKey>
-    {
-        public bool ContainsNode(
-            TKey nodeKey);
-    }
+    public bool ContainsNode(
+        TKey nodeKey);
 }
