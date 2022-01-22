@@ -14,6 +14,10 @@
             where TComparable : IComparable<TComparable>
             => !source.IsLessThan(target);
 
+        public static bool IsGreaterThanZero(
+            this int source)
+            => source.IsGreaterThan(0);
+
         public static bool IsLessThan<TComparable>(
             this TComparable source,
             TComparable target)
@@ -25,5 +29,9 @@
             TComparable target)
             where TComparable : IComparable<TComparable>
             => !source.IsGreaterThan(target);
+
+        public static bool IsLessThanZero(
+            this int source)
+            => source.IsLessThan(0);
     }
 }
