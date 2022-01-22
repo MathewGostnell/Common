@@ -11,4 +11,6 @@ public interface IEdge<TKey>
     {
         get;
     }
+
+    public bool IsNotSelfEdge();
 }
