@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Common.ExtensionLibrary\Common.ExtensionLibrary.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Graphs\Collections\" />
+  </ItemGroup>
+
 </Project>

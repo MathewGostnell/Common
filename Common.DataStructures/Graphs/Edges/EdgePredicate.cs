@@ -1,4 +1,4 @@
-﻿namespace Common.DataStructures.Graphs.Predicates;
+﻿namespace Common.DataStructures.Graphs.Edges;
 
 using Common.DataStructures.Graphs.Contracts;
 

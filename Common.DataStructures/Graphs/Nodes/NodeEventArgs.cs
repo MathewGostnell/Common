@@ -1,7 +1,14 @@
-﻿namespace Common.DataStructures.Graphs.Events;
+﻿namespace Common.DataStructures.Graphs.Nodes;
+
+using System;
 
 public class NodeEventArgs<TKey> : EventArgs
 {
+    public TKey Node
+    {
+        get;
+    }
+
     public NodeEventArgs(
         TKey nodeKey)
     {
@@ -10,8 +17,6 @@ public class NodeEventArgs<TKey> : EventArgs
             throw new ArgumentNullException(nameof(nodeKey));
         }
 
-        NodeKey = nodeKey;
+        Node = nodeKey;
     }
-
-    public TKey NodeKey { get; }
 }

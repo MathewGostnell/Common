@@ -2,15 +2,13 @@
 
 public interface IEdge<TKey>
 {
-    public TKey Source
+    public TKey SourceKey
     {
         get;
     }
 
-    public TKey Target
+    public TKey TargetKey
     {
         get;
     }
-
-    public bool IsNotSelfEdge();
 }
