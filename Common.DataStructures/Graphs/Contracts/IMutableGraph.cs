@@ -3,10 +3,10 @@
 using Common.DataStructures.Graphs.Edges;
 using Common.DataStructures.Graphs.Nodes;
 
-public interface IMutableGraph<TKey, TEdge>
+public interface IMutableGraph<TKey, TEdge, TValue>
     : IGraph<TKey, TEdge>,
         IMutableEdgeSet<TKey, TEdge>,
-        IMutableNodeSet<TKey>
+        IMutableNodeSet<TKey, TValue>
     where TEdge : IEdge<TKey>
 {
     public event EdgeAction<TKey, TEdge>? EdgeAdded;

@@ -1,6 +1,7 @@
 ﻿namespace Common.DataStructures.Graphs.Edges;
 
 using Common.DataStructures.Graphs.Contracts;
+using Common.ExtensionLibrary;
 using System.Collections.Generic;
 
 public class MatrixEdgeSet<TKey, TEdge>
@@ -79,8 +80,12 @@ public class MatrixEdgeSet<TKey, TEdge>
                 targetKey)
             && AdjacencyMatrix[sourceKey][targetKey];
 
-    public void Clear()
-        => AdjacencyMatrix.Clear();
+    public bool Clear()
+    {
+        AdjacencyMatrix.Clear();
+
+        return Edges.IsNullOrEmpty();
+    }
 
     public override bool ContainsEdge(
         TKey sourceKey,
@@ -122,7 +127,9 @@ public class MatrixEdgeSet<TKey, TEdge>
         TKey sourceKey,
         TKey targetKey)
     {
-        if (ContainsEdge(sourceKey, targetKey))
+        if (AreAdjacent(
+            sourceKey,
+            targetKey))
         {
             AdjacencyMatrix[sourceKey][targetKey] = false;
             return true;

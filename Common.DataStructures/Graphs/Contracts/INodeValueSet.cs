@@ -1,6 +1,6 @@
 ﻿namespace Common.DataStructures.Graphs.Contracts;
 
-internal interface INodeValueSet<TKey, TValue> : INodeSet<TKey>
+public interface INodeValueSet<TKey, TValue> : INodeSet<TKey>
 {
     public TValue? GetNodeValue(
         TKey nodeKey);

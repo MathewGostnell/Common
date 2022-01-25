@@ -1,10 +1,12 @@
 ﻿namespace Common.DataStructures.Graphs.Nodes;
 
 using Common.DataStructures.Graphs.Contracts;
+using Common.ExtensionLibrary;
 using System.Collections.Generic;
 
 public class MatrixNodeSet<TKey, TValue>
-    : NodeSet<TKey, TValue>, IMutableNodeSet<TKey>
+    : NodeSet<TKey, TValue>,
+        IMutableNodeSet<TKey, TValue>
     where TKey : IEquatable<TKey>
 {
     public override IEnumerable<TKey> Nodes
@@ -37,8 +39,12 @@ public class MatrixNodeSet<TKey, TValue>
         IEnumerable<TKey> nodeKeys)
         => nodeKeys.Count(AddNode);
 
-    public void Clear()
-        => NodeToValueMapping.Clear();
+    public bool Clear()
+    {
+        NodeToValueMapping.Clear();
+
+        return Nodes.IsNullOrEmpty();
+    }
 
     public override bool ContainsNode(
         TKey nodeKey)

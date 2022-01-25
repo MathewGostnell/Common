@@ -15,7 +15,7 @@ public interface IMutableEdgeSet<TKey, TEdge>
         TKey sourceKey,
         TKey targetKey);
 
-    public void Clear();
+    public bool Clear();
 
     public IEnumerable<TEdge> GetNeighbors(
         TKey sourceKey);

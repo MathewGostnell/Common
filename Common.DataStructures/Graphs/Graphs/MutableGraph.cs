@@ -5,13 +5,13 @@ using Common.DataStructures.Graphs.Edges;
 using Common.DataStructures.Graphs.Nodes;
 using Common.ExtensionLibrary;
 
-public class MutableGraph<TKey, TEdge>
+public class MutableGraph<TKey, TEdge, TValue>
     : Graph<TKey, TEdge>,
-        IMutableGraph<TKey, TEdge>
+        IMutableGraph<TKey, TEdge, TValue>
     where TEdge : IEdge<TKey>
 {
     public MutableGraph(
-        IMutableNodeSet<TKey> nodeSet,
+        IMutableNodeSet<TKey, TValue> nodeSet,
         IMutableEdgeSet<TKey, TEdge> edgeSet,
         EdgeFactory<TKey, TEdge> edgeFactory,
         bool isDirected = false)
@@ -50,7 +50,7 @@ public class MutableGraph<TKey, TEdge>
         get;
     }
 
-    protected new IMutableNodeSet<TKey> NodeSet
+    protected new IMutableNodeSet<TKey, TValue> NodeSet
     {
         get;
     }
@@ -72,6 +72,12 @@ public class MutableGraph<TKey, TEdge>
         TKey sourceKey,
         TKey targetKey)
     {
+        if (sourceKey is null
+            || targetKey is null)
+        {
+            throw new ArgumentNullException();
+        }
+
         if (!ContainsNode(sourceKey)
             || !ContainsNode(targetKey)
             || ContainsEdge(
@@ -81,16 +87,17 @@ public class MutableGraph<TKey, TEdge>
             return false;
         }
 
-        bool addedEdge = IsDirected
-        ? EdgeSet.AddEdge(
-            sourceKey,
-            targetKey)
-        : EdgeSet.AddEdge(
+        bool isSelfEdge = sourceKey.Equals(targetKey);
+        bool addedEdge = IsDirected || isSelfEdge
+            ? EdgeSet.AddEdge(
                 sourceKey,
                 targetKey)
-            && EdgeSet.AddEdge(
-                targetKey,
-                sourceKey);
+            : EdgeSet.AddEdge(
+                    sourceKey,
+                    targetKey)
+                && EdgeSet.AddEdge(
+                    targetKey,
+                    sourceKey);
         if (addedEdge)
         {
             OnEdgeAdded(
@@ -151,11 +158,9 @@ public class MutableGraph<TKey, TEdge>
             && areAdjacent;
     }
 
-    public void Clear()
-    {
-        EdgeSet.Clear();
-        NodeSet.Clear();
-    }
+    public bool Clear()
+        => EdgeSet.Clear()
+            && NodeSet.Clear();
 
     public IEnumerable<TEdge> GetNeighbors(
         TKey sourceKey)
@@ -182,6 +187,10 @@ public class MutableGraph<TKey, TEdge>
         neighbors = neighbors.Distinct();
         return neighbors;
     }
+
+    public TValue? GetNodeValue(
+        TKey nodeKey)
+        => NodeSet.GetNodeValue(nodeKey);
 
     public virtual void OnEdgeAdded(
         TEdge edge)
@@ -298,4 +307,11 @@ public class MutableGraph<TKey, TEdge>
     public int RemoveNodes(
         IEnumerable<TKey> nodeKeys)
         => NodeSet.RemoveNodes(nodeKeys);
+
+    public bool SetNodeValue(
+        TKey nodeKey,
+        TValue? nodeValue)
+        => NodeSet.SetNodeValue(
+            nodeKey,
+            nodeValue);
 }
