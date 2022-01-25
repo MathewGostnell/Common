@@ -17,13 +17,13 @@ public class MatrixEdgeSet<TKey, TEdge>
         get;
     }
 
-    protected EdgeFactory<TKey, TEdge> EdgeFactory
+    protected IEdgeFactory<TKey, TEdge> EdgeFactory
     {
         get;
     }
 
     public MatrixEdgeSet(
-        EdgeFactory<TKey, TEdge> edgeFactory)
+        IEdgeFactory<TKey, TEdge> edgeFactory)
     {
         if (edgeFactory is null)
         {
@@ -51,7 +51,7 @@ public class MatrixEdgeSet<TKey, TEdge>
                 sourceKey,
                 new Dictionary<TKey, bool>
                 {
-                    {targetKey, false}
+                    {targetKey, true}
                 });
             return true;
         }
@@ -63,12 +63,13 @@ public class MatrixEdgeSet<TKey, TEdge>
     }
 
     public int AddEdges(
-        IEnumerable<TEdge> edges)
-        => edges.Count(
+        IEnumerable<TEdge>? edges)
+        => edges?.Count(
             edge =>
             AddEdge(
                 edge.SourceKey,
-                edge.TargetKey));
+                edge.TargetKey))
+            ?? 0;
 
     public bool AreAdjacent(
         TKey sourceKey,
@@ -108,7 +109,7 @@ public class MatrixEdgeSet<TKey, TEdge>
             if (keyValuePair.Value)
             {
                 neighborList.Add(
-                    EdgeFactory(
+                    EdgeFactory.CreateEdge(
                         sourceKey,
                         keyValuePair.Key));
             }
@@ -131,10 +132,11 @@ public class MatrixEdgeSet<TKey, TEdge>
     }
 
     public int RemoveEdges(IEnumerable<TEdge> edges)
-        => edges.Count(
+        => edges?.Count(
             edge => RemoveEdge(
                 edge.SourceKey,
-                edge.TargetKey));
+                edge.TargetKey))
+            ?? 0;
 
     protected IEnumerable<TEdge> GetEdges()
     {
@@ -150,7 +152,7 @@ public class MatrixEdgeSet<TKey, TEdge>
                 if (edgeKeyValuePair.Value)
                 {
                     edgeList.Add(
-                        EdgeFactory(
+                        EdgeFactory.CreateEdge(
                             keyValuePair.Key,
                             edgeKeyValuePair.Key));
                 }

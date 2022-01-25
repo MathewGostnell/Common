@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Common.DataStructures\Common.DataStructures.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="GraphsTests\" />
-  </ItemGroup>
-
 </Project>

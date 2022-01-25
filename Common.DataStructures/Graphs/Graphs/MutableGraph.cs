@@ -3,12 +3,12 @@
 using Common.DataStructures.Graphs.Contracts;
 using Common.DataStructures.Graphs.Edges;
 using Common.DataStructures.Graphs.Nodes;
-using System.Collections.Generic;
+using Common.ExtensionLibrary;
 
 public class MutableGraph<TKey, TEdge>
     : Graph<TKey, TEdge>,
         IMutableGraph<TKey, TEdge>
-    where TEdge : IEdge<TKey>, new()
+    where TEdge : IEdge<TKey>
 {
     public MutableGraph(
         IMutableNodeSet<TKey> nodeSet,
@@ -55,7 +55,7 @@ public class MutableGraph<TKey, TEdge>
         get;
     }
 
-    protected EdgeFactory<TKey, TEdge> EdgeFactory
+    protected IEdgeFactory<TKey, TEdge> EdgeFactory
     {
         get;
     }
@@ -72,20 +72,29 @@ public class MutableGraph<TKey, TEdge>
         TKey sourceKey,
         TKey targetKey)
     {
+        if (!ContainsNode(sourceKey)
+            || !ContainsNode(targetKey)
+            || ContainsEdge(
+                sourceKey,
+                targetKey))
+        {
+            return false;
+        }
+
         bool addedEdge = IsDirected
-            ? EdgeSet.AddEdge(
+        ? EdgeSet.AddEdge(
+            sourceKey,
+            targetKey)
+        : EdgeSet.AddEdge(
                 sourceKey,
                 targetKey)
-            : EdgeSet.AddEdge(
-                    sourceKey,
-                    targetKey)
-                && EdgeSet.AddEdge(
-                    targetKey,
-                    sourceKey);
+            && EdgeSet.AddEdge(
+                targetKey,
+                sourceKey);
         if (addedEdge)
         {
             OnEdgeAdded(
-                EdgeFactory(
+                EdgeFactory.CreateEdge(
                     sourceKey,
                     targetKey));
         }
@@ -94,17 +103,18 @@ public class MutableGraph<TKey, TEdge>
     }
 
     public int AddEdges(
-        IEnumerable<TEdge> edges)
+        IEnumerable<TEdge>? edges)
     {
         int addedEdges = EdgeSet.AddEdges(edges);
-        if (IsDirected)
+        if (IsDirected
+            || addedEdges.IsLessThanOrEqualTo(0))
         {
             return addedEdges;
         }
 
-        IEnumerable<TEdge>? otherEdges = edges.Select(
+        IEnumerable<TEdge>? otherEdges = edges?.Select(
             edge =>
-            EdgeFactory(
+            EdgeFactory.CreateEdge(
                 edge.TargetKey,
                 edge.SourceKey));
         if (otherEdges is null)
@@ -268,7 +278,7 @@ public class MutableGraph<TKey, TEdge>
 
         IEnumerable<TEdge>? otherEdges = edges.Select(
             edge =>
-            EdgeFactory(
+            EdgeFactory.CreateEdge(
                 edge.TargetKey,
                 edge.SourceKey));
         if (otherEdges is null)

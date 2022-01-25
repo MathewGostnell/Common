@@ -2,7 +2,20 @@
 
 using Common.DataStructures.Graphs.Contracts;
 
-public delegate TEdge EdgeFactory<TKey, TEdge>(
-    TKey sourceKey,
-    TKey targetKey)
-    where TEdge : IEdge<TKey>;
+public class EdgeFactory<TKey, TEdge> : IEdgeFactory<TKey, TEdge>
+    where TEdge : IEdge<TKey>
+{
+    public TEdge CreateEdge(
+        TKey source,
+        TKey target)
+    {
+        Type edgeType = typeof(TEdge);
+        var edge = (TEdge?)Activator.CreateInstance(
+            edgeType,
+            source,
+            target);
+        return edge is null
+            ? throw new ApplicationException($"Failed to create {edgeType.Name} instance.")
+            : edge;
+    }
+}

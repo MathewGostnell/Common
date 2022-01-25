@@ -9,7 +9,7 @@ public interface IMutableEdgeSet<TKey, TEdge>
         TKey targetKey);
 
     public int AddEdges(
-        IEnumerable<TEdge> edges);
+        IEnumerable<TEdge>? edges);
 
     public bool AreAdjacent(
         TKey sourceKey,

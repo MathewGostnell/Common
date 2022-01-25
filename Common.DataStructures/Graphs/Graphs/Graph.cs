@@ -55,4 +55,8 @@ public abstract class Graph<TKey, TEdge> : IGraph<TKey, TEdge>
     public bool ContainsEdge(
         TEdge edge)
         => EdgeSet.ContainsEdge(edge);
+
+    public bool ContainsNode(
+        TKey nodeKey)
+        => NodeSet.ContainsNode(nodeKey);
 }
