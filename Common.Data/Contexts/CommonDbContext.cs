@@ -6,9 +6,13 @@ using System.Reflection;
 
 public class CommonDbContext : DbContext
 {
+    internal CommonDbContext()
+    {
+    }
+
     public CommonDbContext(
-        DbContextOptions<CommonDbContext> dbContextOptions)
-        : base(dbContextOptions)
+        DbContextOptions<CommonDbContext> options)
+        : base(options)
     {
     }
 
